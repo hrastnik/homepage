@@ -86,29 +86,32 @@ const [pineta, labineca] = await Promise.allSettled([
             <div
               class="absolute top-0 left-0 w-full h-full flex flex-col overflow-hidden"
             >
-              <div class="marquee space-y-4">
+              <div class="marquee">
                 {
                   pineta.status === "fulfilled" &&
                     [...pineta.value.dishList].map((dish) => (
-                      <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                        {dish.imageURL ? (
-                          <img
-                            src={dish.imageURL}
-                            alt={dish.name}
-                            class="w-16 h-16 rounded-md object-cover mr-4"
-                          />
-                        ) : (
-                          <div class="w-16 h-16 flex items-center justify-center bg-gray-200 text-gray-400 rounded-md mr-4">
-                            No Image
+                      <>
+                        <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                          {dish.imageURL ? (
+                            <img
+                              src={dish.imageURL}
+                              alt={dish.name}
+                              class="w-16 h-16 rounded-md object-cover mr-4"
+                            />
+                          ) : (
+                            <div class="w-16 h-16 flex items-center justify-center bg-gray-200 text-gray-400 rounded-md mr-4">
+                              No Image
+                            </div>
+                          )}
+                          <div class="flex-1">
+                            <h3 class="text-lg font-medium text-gray-700">
+                              {dish.name}
+                            </h3>
+                            <p class="text-gray-500">{dish.price}</p>
                           </div>
-                        )}
-                        <div class="flex-1">
-                          <h3 class="text-lg font-medium text-gray-700">
-                            {dish.name}
-                          </h3>
-                          <p class="text-gray-500">{dish.price}</p>
                         </div>
-                      </div>
+                        <div class="h-4" />
+                      </>
                     ))
                 }
               </div>
