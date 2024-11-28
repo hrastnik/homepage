@@ -171,6 +171,9 @@ const [pineta, labineca] = await Promise.allSettled([
             break;
           }
 
+          // We need to double the inner items beacuse we are using translateY(-50%)
+          // Otherwise, the marquee would glitch when it reaches the middle point
+          marquee.innerHTML += innerItems;
           marquee.innerHTML += innerItems;
         }
 
@@ -183,12 +186,18 @@ const [pineta, labineca] = await Promise.allSettled([
 
         // Handle resize
         window.addEventListener("resize", () => {
-          marquee.innerHTML = innerItems;
+          marquee.innerHTML = "";
+          let safety = 30;
+
           while (marquee.scrollHeight < parent.clientHeight * 2) {
+            if (safety-- < 0) {
+              console.warn("Safety limit reached, exiting loop");
+              break;
+            }
+
+            marquee.innerHTML += innerItems;
             marquee.innerHTML += innerItems;
           }
-
-          console.log("scrollHeight", marquee.scrollHeight);
 
           setAnimationDuration();
         });
