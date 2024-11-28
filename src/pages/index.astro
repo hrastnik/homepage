@@ -163,6 +163,7 @@ const [pineta, labineca] = await Promise.allSettled([
         assert(parent, "No parent element found");
 
         const innerItems = marquee.innerHTML;
+        marquee.innerHTML = "";
 
         let safety = 30;
         while (marquee.scrollHeight < parent.clientHeight * 2) {
