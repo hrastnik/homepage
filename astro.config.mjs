@@ -12,7 +12,7 @@ export default defineConfig({
     isr: false,
     edgeMiddleware: false,
     webAnalytics: { enabled: false },
-    maxDuration: 15,
+    maxDuration: 10,
     // @ts-ignore - this is maybe a valid option
     functionPerRoute: false,
   }),
