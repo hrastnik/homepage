@@ -73,6 +73,8 @@ const [pineta, labineca, weather] = await Promise.allSettled([
   getLabineca(),
   getWeather(),
 ]);
+
+export const prerender = false;
 ---
 
 <html lang="en">
@@ -103,36 +105,38 @@ const [pineta, labineca, weather] = await Promise.allSettled([
         {/* Pineta Section */}
         <div class="flex flex-1 gap-4">
           <div class="flex flex-1 flex-col bg-white shadow-lg rounded-lg p-2">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Pineta</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+              Pineta
+            </h2>
             <div class="flex-1 relative">
               <div
                 class="absolute top-0 left-0 w-full h-full flex flex-col overflow-hidden"
               >
-                <div class="marquee">
+                <div class="marquee-disabled">
                   {
                     pineta.status === "fulfilled" &&
-                      pineta.value.dishList.map((dish) => (
+                      pineta.value.dishList.map((dish, index) => (
                         <>
-                          <div class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                          <div class="flex items-center bg-gray-50 p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                             {dish.imageURL ? (
                               <img
                                 src={dish.imageURL}
                                 alt={dish.name}
-                                class="w-16 h-16 rounded-md object-cover mr-4"
+                                class="w-14 h-14 rounded-md object-cover mr-4"
                               />
                             ) : (
-                              <div class="w-16 h-16 flex items-center justify-center bg-gray-200 text-gray-400 rounded-md mr-4">
+                              <div class="w-14 h-14 flex items-center justify-center bg-gray-200 text-gray-400 rounded-md mr-4">
                                 No Image
                               </div>
                             )}
                             <div class="flex-1">
-                              <h3 class="text-lg font-medium text-gray-700">
-                                {dish.name}
+                              <h3 class="text-md font-medium text-gray-700">
+                                {index + 1}. {dish.name}
                               </h3>
                               <p class="text-gray-500">{dish.price}</p>
                             </div>
                           </div>
-                          <div class="h-4" />
+                          <div class="h-2" />
                         </>
                       ))
                   }
