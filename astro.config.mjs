@@ -13,6 +13,8 @@ export default defineConfig({
     edgeMiddleware: false,
     webAnalytics: { enabled: false },
     maxDuration: 15,
+    // @ts-ignore - this is maybe a valid option
+    functionPerRoute: false,
   }),
   integrations: [tailwind()],
 });
