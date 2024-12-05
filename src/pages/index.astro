@@ -1,6 +1,9 @@
 ---
 import * as cheerio from "cheerio";
 import vetaNjamMenu from "../assets/veta-njam-menu.jpg";
+import labinecaQRCodeSvg from "../assets/labineca-qr.svg";
+import pinetaQRCodeSvg from "../assets/pineta-qr.svg";
+import vetaQRCodeSvg from "../assets/veta-qr.svg"; 
 
 async function getPineta() {
   const $ = await cheerio.fromURL(
@@ -81,7 +84,10 @@ export const prerender = false;
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="refresh" content="1800" />
-    <meta name="description" content="Lloyds digital dashboard | Otkrijte najbolja jela i menije u Pineti i Labineci. Pratite uživo streamove i vremensku prognozu." />
+    <meta
+      name="description"
+      content="Lloyds digital dashboard | Otkrijte najbolja jela i menije u Pineti i Labineci. Pratite uživo streamove i vremensku prognozu."
+    />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
@@ -91,24 +97,24 @@ export const prerender = false;
     <div
       class="flex flex-col h-screen max-h-screen bg-gray-100 text-gray-800 p-4"
     >
-      {/* Header */}
-      <header class="text-center mb-4">
-        <h1 class="text-4xl font-bold text-gray-900">
-          Lloyds digital dashboard
-        </h1>
-        <!-- <p class="text-lg text-gray-600">
-          Discover the best dishes and menus at Pineta and Labineca.
-        </p> -->
-      </header>
-
       {/* Main content with grid */}
       <div class="parent flex flex-1 gap-4">
         {/* Pineta Section */}
         <div class="flex flex-1 gap-4">
           <div class="flex flex-1 flex-col bg-white shadow-lg rounded-lg p-2">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
-              Pineta
-            </h2>
+            <div class="flex justify-between">
+              <div>
+                <h2 class="text-2xl font-semibold text-gray-800">
+                  Pineta
+                </h2>
+                <a href="tel:+38552421201"><h3 class="text-l font-semibold text-gray-800 mb-2">052 421 201</h3></a>
+              </div>
+              <img
+                src={pinetaQRCodeSvg.src}
+                alt="Pineta QR"
+                class="w-16 h-16"
+              />
+            </div>
             <div class="flex-1 relative">
               <div
                 class="absolute top-0 left-0 w-full h-full flex flex-col overflow-hidden"
@@ -149,7 +155,19 @@ export const prerender = false;
 
         {/* Labineca Section */}
         <div class="flex flex-col flex-1 bg-white shadow-lg rounded-lg p-2">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-2">Labineca</h2>
+          <div class="flex justify-between">
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800">
+                Labineca
+              </h2>
+              <a href="tel:052856280"><h3 class="text-l font-semibold text-gray-800 mb-2">052 856 280</h3></a>
+            </div>
+            <img
+              src={labinecaQRCodeSvg.src}
+              alt="Labineca QR"
+              class="w-16 h-16"
+            />
+          </div>
           {
             labineca.status === "fulfilled" && labineca.value.menuURI ? (
               <div class="flex-1 overflow-hidden relative">
@@ -170,7 +188,19 @@ export const prerender = false;
           <div
             class="flex flex-col flex-1 bg-white shadow-lg rounded-lg p-2 overflow-hidden"
           >
-            <h2 class="text-2xl font-semibold text-gray-800 mb-2">Veta Njam</h2>
+          <div class="flex justify-between">
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-800">
+                Veta Njam
+              </h2>
+              <a href="tel:052856280"><h3 class="text-l font-semibold text-gray-800 mb-2">098 587 457</h3></a>
+            </div>
+            <img
+              src={vetaQRCodeSvg.src}
+              alt="Labineca QR"
+              class="w-16 h-16"
+            />
+          </div>
 
             <div class="flex-1 relative">
               <div class="absolute top-0 left-0 w-full h-full">
@@ -204,7 +234,9 @@ export const prerender = false;
 
       <div class="flex mt-4 gap-4">
         {/* Live stream 1 Section */}
-        <div class="flex-[2] flex justify-center items-center bg-white shadow-lg rounded-lg p-2">
+        <div
+          class="flex-[2] flex justify-center items-center bg-white shadow-lg rounded-lg p-2"
+        >
           <iframe
             class="flex-1 w-auto"
             width="560"
@@ -218,7 +250,9 @@ export const prerender = false;
         </div>
 
         {/* Live stream 2 Section */}
-        <div class="flex-[2] flex justify-center items-center bg-white shadow-lg rounded-lg p-2">
+        <div
+          class="flex-[2] flex justify-center items-center bg-white shadow-lg rounded-lg p-2"
+        >
           <iframe
             class="flex-1 w-auto"
             width="560"
@@ -259,6 +293,15 @@ export const prerender = false;
 
         if (marquee.clientHeight === 0) {
           console.warn("Marquee height is 0, skipping cloning");
+          return;
+        }
+
+        const marqueeParent = marquee.parentElement;
+        assert(marqueeParent, "No marquee parent element found");
+
+        // If the content fits, do nothing
+        if (marquee.clientHeight <= marqueeParent.clientHeight) {
+          console.warn("Marquee content fits, skipping cloning");
           return;
         }
 
