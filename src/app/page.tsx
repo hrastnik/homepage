@@ -11,7 +11,7 @@ import { WeatherError } from "./weather/WeatherError";
 import { WeatherLoading } from "./weather/WeatherLoading";
 import { Radar } from "./radar/Radar";
 
-export default async function Home() {
+export default async function IndexPage() {
   return (
     <div className="flex flex-col h-screen max-h-screen bg-gray-100 text-gray-800 p-4">
       {/* Main content with grid */}
