@@ -31,6 +31,8 @@ export async function Labineca() {
 
   const labineca = await getLabineca();
 
+  console.log("Labineca menuURI:", labineca.menuURI);
+
   return (
     <div className="flex flex-col flex-1 bg-white shadow-lg rounded-lg p-2">
       <div className="flex justify-between">
