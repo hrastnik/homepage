@@ -11,6 +11,8 @@ import { WeatherError } from "./weather/WeatherError";
 import { WeatherLoading } from "./weather/WeatherLoading";
 import { Radar } from "./radar/Radar";
 
+export const dynamic = "force-dynamic";
+
 export default async function IndexPage() {
   return (
     <div className="flex flex-col h-screen max-h-screen bg-gray-100 text-gray-800 p-4">
