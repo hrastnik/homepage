@@ -10,6 +10,8 @@ export async function Labineca() {
       next: { revalidate: 7200 },
     });
     const html = await response.text();
+    console.log("Labineca HTML:", html);
+
     const imageRegex = /{"uri":[^}]*jpg[^}]*}/gm;
     const imageListRaw = html.match(imageRegex) ?? [];
     const imageListParsed = imageListRaw.map((image) => JSON.parse(image));
