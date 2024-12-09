@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 export async function Labineca() {
   async function getLabineca() {
     const response = await fetch("https://www.facebook.com/labineca/", {
@@ -5,26 +7,37 @@ export async function Labineca() {
         accept: "text/html",
         "cache-control": "max-age=0",
         "sec-fetch-site": "same-origin",
+        "user-agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       },
       // Cache request for 2 hours
       next: { revalidate: 7200 },
     });
     const html = await response.text();
-    console.log("Labineca HTML:", html.slice(0, 32), "...");
 
     const imageRegex = /{"uri":[^}]*jpg[^}]*}/gm;
     const imageListRaw = html.match(imageRegex) ?? [];
     const imageListParsed = imageListRaw.map((image) => JSON.parse(image));
 
-    const postImageList = imageListParsed
-      .filter((image) => {
-        return "width" in image && "height" in image && "uri" in image;
-      })
-      .filter((image) => {
-        return 1600 < image.width && image.width < 1650;
-      }) as { uri: string; width: number; height: number }[];
+    const postImageList: { uri: string; width: number; height: number }[] =
+      imageListParsed
+        .filter((image) => {
+          return "width" in image && "height" in image && "uri" in image;
+        })
+        .filter((image) => {
+          return 540 < image.width;
+        });
 
-    const labinecaURI = postImageList[0]?.uri;
+    const latestPost = _.maxBy(postImageList, (image) => {
+      const uri = image.uri;
+      // https://scontent.fzag1-2.fna.fbcdn.net/v/t39.30808-6/469703921_1310865936535795_8844515100120680089_n.jpg?_nc_cat=110&ccb=1-7&_
+      // We want to match `469703921_1310865936535795_8844515100120680089_n.jpg`
+      const regex = /\d*_\d*_\d*_n.jpg/;
+      const match = uri.match(regex);
+      return match ? match[0] : 0;
+    });
+
+    const labinecaURI = latestPost?.uri;
 
     return {
       menuURI: labinecaURI,

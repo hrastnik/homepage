@@ -31,6 +31,8 @@ export async function Pineta() {
 
   const pineta = await getPineta();
 
+  const isMonday = new Date().getDay() === 1;
+
   return (
     <div className="flex flex-1 gap-4">
       <div className="flex flex-1 flex-col bg-white shadow-lg rounded-lg p-2">
@@ -48,32 +50,38 @@ export async function Pineta() {
         <div className="flex-1 relative">
           <div className="absolute top-0 left-0 w-full h-full flex flex-col overflow-hidden">
             <div className="marquee">
-              {pineta.dishList.map((dish, index) => {
-                return (
-                  <Fragment key={`${index} ${dish.name}`}>
-                    <div className="flex items-center bg-gray-50 p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                      {dish.imageURL ? (
-                        <img
-                          src={dish.imageURL}
-                          alt={dish.name}
-                          className="w-14 h-14 rounded-md object-cover mr-4"
-                        />
-                      ) : (
-                        <div className="w-14 h-14 flex items-center justify-center bg-gray-200 text-gray-400 rounded-md mr-4">
-                          No Image
+              {isMonday ? (
+                <div className="text-center text-gray-500 text-md py-16">
+                  Pineta ne radi ponedjeljkom
+                </div>
+              ) : (
+                pineta.dishList.map((dish, index) => {
+                  return (
+                    <Fragment key={`${index} ${dish.name}`}>
+                      <div className="flex items-center bg-gray-50 p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                        {dish.imageURL ? (
+                          <img
+                            src={dish.imageURL}
+                            alt={dish.name}
+                            className="w-14 h-14 rounded-md object-cover mr-4"
+                          />
+                        ) : (
+                          <div className="w-14 h-14 flex items-center justify-center bg-gray-200 text-gray-400 rounded-md mr-4">
+                            No Image
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <h3 className="text-md font-medium text-gray-700">
+                            {index + 1}. {dish.name}
+                          </h3>
+                          <p className="text-gray-500">{dish.price}</p>
                         </div>
-                      )}
-                      <div className="flex-1">
-                        <h3 className="text-md font-medium text-gray-700">
-                          {index + 1}. {dish.name}
-                        </h3>
-                        <p className="text-gray-500">{dish.price}</p>
                       </div>
-                    </div>
-                    <div className="h-2" />
-                  </Fragment>
-                );
-              })}
+                      <div className="h-2" />
+                    </Fragment>
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
