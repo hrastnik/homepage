@@ -2,6 +2,8 @@ import _ from "lodash";
 
 export async function Labineca() {
   async function getLabineca() {
+    console.log("Fetching Labineca");
+
     const response = await fetch("https://www.facebook.com/labineca/", {
       headers: {
         accept: "text/html",
@@ -10,23 +12,52 @@ export async function Labineca() {
         "user-agent":
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       },
-      // Cache request for 2 hours
-      next: { revalidate: 7200 },
+      // Cache request for 10 minutes
+      cache: "force-cache",
+      next: { revalidate: 600 },
     });
     const html = await response.text();
 
     const imageRegex = /{"uri":[^}]*jpg[^}]*}/gm;
     const imageListRaw = html.match(imageRegex) ?? [];
-    const imageListParsed = imageListRaw.map((image) => JSON.parse(image));
 
-    const postImageList: { uri: string; width: number; height: number }[] =
-      imageListParsed
-        .filter((image) => {
-          return "width" in image && "height" in image && "uri" in image;
-        })
-        .filter((image) => {
-          return 540 < image.width;
-        });
+    console.log(
+      "Labineca imageListRaw (regex matches):",
+      imageListRaw.length,
+      "images"
+    );
+
+    const imageListParsed = imageListRaw.map((image) => {
+      try {
+        return JSON.parse(image);
+      } catch (error) {
+        console.log("Parsing error:", error);
+        return { width: 0, height: 0, uri: "" };
+      }
+    });
+
+    console.log("Labineca imageListParsed:", imageListParsed.length, "images");
+
+    const imageListWithWidthAndHeight: {
+      uri: string;
+      width: number;
+      height: number;
+    }[] = imageListParsed.filter((image) => {
+      return "width" in image && "height" in image && "uri" in image;
+    });
+
+    console.log(
+      "Labineca imageListWithWidthAndHeight:",
+      imageListWithWidthAndHeight.length,
+      "images"
+    );
+
+    const postImageList = imageListWithWidthAndHeight.filter((image) => {
+      return 540 < image.width;
+    });
+
+    console.log("Labineca postImageList:", postImageList.length, "images");
+    console.log("Images: ", postImageList);
 
     const latestPost = _.maxBy(postImageList, (image) => {
       const uri = image.uri;
