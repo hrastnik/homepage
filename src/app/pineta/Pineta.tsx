@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio";
 import { Fragment } from "react";
+import { Animate } from "../Animate";
 
 export async function Pineta() {
   async function getPineta() {
@@ -83,6 +84,7 @@ export async function Pineta() {
                 })
               )}
             </div>
+            <Animate></Animate>
           </div>
         </div>
       </div>

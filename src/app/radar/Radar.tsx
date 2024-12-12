@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 export function Radar() {
-  const [currentTime, setCurrentTime] = useState(Date.now());
+  const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(function refreshRadarEffect() {
     const id = setInterval(function refreshRadar() {
