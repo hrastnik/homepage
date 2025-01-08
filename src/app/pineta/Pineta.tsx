@@ -7,8 +7,8 @@ export async function Pineta() {
     const response = await fetch(
       "https://www.pizzeria-pineta-labin.com.hr/restauracja/pizzeria-pineta-labin",
       {
-        // Cache request for 1 hour
-        next: { revalidate: 3600 },
+        // Cache request for 5 minutes
+        next: { revalidate: 300 },
       }
     );
     const html = await response.text();
