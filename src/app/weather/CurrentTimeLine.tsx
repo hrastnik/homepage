@@ -15,7 +15,7 @@ export function CurrentTimeLine() {
       const headers = table.querySelectorAll("th[scope='col']");
       if (headers.length < 2) return; // Ensure at least two columns for calculation
 
-      const now = new Date(); // Use a fixed date to avoid issues with time zones
+      const now = new Date();
 
       setCurrentTime(
         now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) // Update the label to show current time
@@ -29,16 +29,21 @@ export function CurrentTimeLine() {
       const column22PMRect = column22PM.getBoundingClientRect();
       const tableRect = table.getBoundingClientRect();
 
-      const offsetOf1AM = column1AMRect.left - tableRect.left;
-      const widthOfTime = column22PMRect.right - column1AMRect.left;
+      const offsetOf1AM =
+        column1AMRect.left + column1AMRect.width / 4 - tableRect.left;
+      const widthOfTime =
+        column22PMRect.right - column1AMRect.left - column1AMRect.width / 4;
 
       // Calculate the line's position as a percentage between the 1:00 column and 22:00 column
       const currentHour = now.getHours();
       const currentMinutes = now.getMinutes();
-      const currentTimeDecimal = currentHour + currentMinutes / 60; // Current time as a decimal (e.g., 11.5 for 11:30)
+      const currentTimeDecimal = Math.min(
+        currentHour + currentMinutes / 60, // Current time as a decimal (e.g., 11.5 for 11:30)
+        23.33 // we clamp the value to 23.33 to avoid the line going beyond the table
+      );
 
       const linePosition =
-        offsetOf1AM + (currentTimeDecimal / 24) * widthOfTime;
+        offsetOf1AM + (currentTimeDecimal / 23) * widthOfTime;
       setLinePosition(linePosition);
 
       const lastRow = table.querySelector("tr:last-child");
@@ -79,7 +84,7 @@ export function CurrentTimeLine() {
           transform: "translateX(-50%)", // Center the label relative to the line
           backgroundColor: "white",
           color: "#4a90e2",
-          fontSize: "12px",
+          fontSize: "0.72rem",
           fontWeight: "bold",
           padding: "2px 5px",
           borderRadius: "4px",
