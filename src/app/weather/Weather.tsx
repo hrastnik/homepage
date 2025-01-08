@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { CurrentTimeLine } from "./CurrentTimeLine";
 
 export async function Weather() {
   async function getWeather() {
@@ -23,11 +24,12 @@ export async function Weather() {
   const weather = await getWeather();
 
   return (
-    <div className="flex-[5] flex">
+    <div className="flex-[5] flex relative">
       <div
         className="weather-table flex-1 bg-white shadow-lg rounded-lg p-2"
         dangerouslySetInnerHTML={{ __html: weather.weatherHTML }}
       />
+      <CurrentTimeLine />
     </div>
   );
 }

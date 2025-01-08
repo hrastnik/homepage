@@ -25,7 +25,7 @@ export function Animate() {
 
     // If the content fits, do nothing
     if (marquee.clientHeight <= marqueeParent.clientHeight) {
-      console.warn("Marquee content fits, skipping cloning");
+      console.log("Marquee content fits, skipping cloning");
       return;
     }
 
