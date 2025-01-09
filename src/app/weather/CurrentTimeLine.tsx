@@ -9,7 +9,10 @@ export function CurrentTimeLine() {
 
   useEffect(() => {
     const calculatePosition = () => {
-      const table = document.querySelector(".fd-c-table");
+      const tableParent = document.querySelector(".weather-table");
+      if (!tableParent) return;
+
+      const table = tableParent.querySelector("table");
       if (!table) return;
 
       const headers = table.querySelectorAll("th[scope='col']");
@@ -27,23 +30,18 @@ export function CurrentTimeLine() {
       const column22PM = headers[headers.length - 1];
       const column1AMRect = column1AM.getBoundingClientRect();
       const column22PMRect = column22PM.getBoundingClientRect();
-      const tableRect = table.getBoundingClientRect();
+      const tableRect = tableParent.getBoundingClientRect();
 
-      const offsetOf1AM =
-        column1AMRect.left + column1AMRect.width / 4 - tableRect.left;
-      const widthOfTime =
-        column22PMRect.right - column1AMRect.left - column1AMRect.width / 4;
+      const offsetOf1AM = column1AMRect.x - tableRect.x;
+      const widthOf21Hours = column22PMRect.x - column1AMRect.x;
+      const widthOf1Hour = widthOf21Hours / 21;
 
       // Calculate the line's position as a percentage between the 1:00 column and 22:00 column
       const currentHour = now.getHours();
       const currentMinutes = now.getMinutes();
-      const currentTimeDecimal = Math.min(
-        currentHour + currentMinutes / 60, // Current time as a decimal (e.g., 11.5 for 11:30)
-        23.33 // we clamp the value to 23.33 to avoid the line going beyond the table
-      );
+      const currentTimeDecimal = currentHour + currentMinutes / 60; // Current time as a decimal (e.g., 11.5 for 11:30)
 
-      const linePosition =
-        offsetOf1AM + (currentTimeDecimal / 23) * widthOfTime;
+      const linePosition = offsetOf1AM + currentTimeDecimal * widthOf1Hour;
       setLinePosition(linePosition);
 
       const lastRow = table.querySelector("tr:last-child");

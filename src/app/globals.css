@@ -49,6 +49,10 @@ body {
   vertical-align: middle;
 }
 
+.weather-table th[scope="col"] {
+  width: 5%;
+}
+
 .weather-table td span {
   display: flex;
   justify-self: center;
