@@ -63,9 +63,11 @@ export async function Labineca() {
       const uri = image.uri;
       // https://scontent.fzag1-2.fna.fbcdn.net/v/t39.30808-6/469703921_1310865936535795_8844515100120680089_n.jpg?_nc_cat=110&ccb=1-7&_
       // We want to match `469703921_1310865936535795_8844515100120680089_n.jpg`
-      const regex = /\d*_\d*_\d*_n.jpg/;
+      // then extract the middle number `1310865936535795`
+      const regex = /\d*_(\d*)_\d*_n.jpg/;
       const match = uri.match(regex);
-      return match ? match[0] : 0;
+      const id = Number(match ? match[1] : "0");
+      return id;
     });
 
     const labinecaURI = latestPost?.uri;
