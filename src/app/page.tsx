@@ -45,8 +45,8 @@ export default async function IndexPage() {
                 </a>
               </div>
               <img
-                src={"/labineca-qr.svg"}
-                alt="Labineca QR"
+                src={"/veta-qr.svg"}
+                alt="Veta Njam QR"
                 className="w-16 h-16"
               />
             </div>

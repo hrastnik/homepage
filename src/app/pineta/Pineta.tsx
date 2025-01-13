@@ -39,7 +39,9 @@ export async function Pineta() {
       <div className="flex flex-1 flex-col bg-white shadow-lg rounded-lg p-2">
         <div className="flex justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800">Pineta</h2>
+            <a href="https://www.pizzeria-pineta-labin.com.hr/restauracja/pizzeria-pineta-labin">
+              <h2 className="text-2xl font-semibold text-gray-800">Pineta</h2>
+            </a>
             <a href="tel:+38552421201">
               <h3 className="text-l font-semibold text-gray-800 mb-2">
                 052 421 201

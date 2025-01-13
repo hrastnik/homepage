@@ -85,7 +85,9 @@ export async function Labineca() {
     <div className="flex flex-col flex-1 bg-white shadow-lg rounded-lg p-2">
       <div className="flex justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-800">Labineca</h2>
+          <a href="https://www.facebook.com/labineca/">
+            <h2 className="text-2xl font-semibold text-gray-800">Labineca</h2>
+          </a>
           <a href="tel:+38552856280">
             <h3 className="text-l font-semibold text-gray-800 mb-2">
               052 856 280
