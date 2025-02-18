@@ -69,7 +69,7 @@ export default async function IndexPage() {
 
       <div className="flex mt-4 gap-4">
         {/* Live stream 1 Section */}
-        <div className="w-[25%] aspect-[560/315] justify-center items-center bg-white shadow-lg rounded-lg p-2">
+        <div className="w-[calc(25%-1.25rem)] aspect-[560/315] justify-center items-center bg-white shadow-lg rounded-lg p-2">
           <iframe
             className="w-full h-full"
             width="560"
@@ -86,7 +86,7 @@ export default async function IndexPage() {
         </div>
 
         {/* Live stream 2 Section */}
-        <div className="w-[25%] aspect-[560/315] justify-center items-center bg-white shadow-lg rounded-lg p-2">
+        <div className="w-[calc(25%-0.25rem)] aspect-[560/315] justify-center items-center bg-white shadow-lg rounded-lg p-2">
           <iframe
             className="w-full h-full"
             width="560"

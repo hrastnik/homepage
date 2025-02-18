@@ -4,8 +4,11 @@ import { Animate } from "../Animate";
 
 export async function Pineta() {
   async function getPineta() {
+    const duration5minInMs = 1000 * 60 * 5;
+    const cacheBuster5min = Math.floor(Date.now() / duration5minInMs);
     const response = await fetch(
-      "https://www.pizzeria-pineta-labin.com.hr/restauracja/pizzeria-pineta-labin",
+      "https://www.pizzeria-pineta-labin.com.hr/restauracja/pizzeria-pineta-labin?cache=" +
+        cacheBuster5min,
       {
         // Cache request for 5 minutes
         next: { revalidate: 300 },
