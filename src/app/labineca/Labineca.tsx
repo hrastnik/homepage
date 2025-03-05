@@ -12,9 +12,7 @@ export async function Labineca() {
         "user-agent":
           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       },
-      // Cache request for 2 minutes
-      cache: "force-cache",
-      next: { revalidate: 120 },
+      cache: "no-store",
     });
     const html = await response.text();
 

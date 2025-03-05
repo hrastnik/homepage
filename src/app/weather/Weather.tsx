@@ -5,10 +5,7 @@ export async function Weather() {
   async function getWeather() {
     const response = await fetch(
       "https://prognoza.hr/3dslika2_print_tp.php?Code=Labin",
-      {
-        // Cache request for 5 minutes
-        next: { revalidate: 300 },
-      }
+      { cache: "no-store" }
     );
     const html = await response.text();
     const $ = cheerio.load(html);
