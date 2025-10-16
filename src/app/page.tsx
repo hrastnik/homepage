@@ -68,21 +68,69 @@ export default async function IndexPage() {
       </div>
 
       <div className="flex mt-4 gap-4">
-        {/* Live stream 1 Section */}
-        <div className="w-[calc(25%-1.25rem)] aspect-[560/315] justify-center items-center bg-white shadow-lg rounded-lg p-2">
-          <iframe
-            className="w-full h-full"
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/VQPLiEHV-tM?si=qrB5qlyYn5bvjsGA&controls=0&autoplay=1"
-            title="YouTube video player"
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore This is default YouTube embed code
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
+        {/* Fast food Škarpoc Section */}
+        <div className="w-[calc(25%-1.25rem)] aspect-[560/315] bg-white shadow-lg rounded-lg p-4 overflow-y-auto">
+          <div className="h-full flex flex-col">
+            <h2 className="text-xl font-bold text-gray-800 mb-3 text-center">
+              Fast food Škarpoc
+            </h2>
+            <div className="flex-1 space-y-3">
+              <div className="bg-blue-50 rounded-lg p-3 border-l-4 border-blue-400">
+                <div className="flex items-center mb-1">
+                  <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded font-semibold">
+                    PON
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  Sočni pileći filet u umaku od gljiva i domaći pire krumpir
+                </p>
+              </div>
+
+              <div className="bg-green-50 rounded-lg p-3 border-l-4 border-green-400">
+                <div className="flex items-center mb-1">
+                  <span className="bg-green-500 text-white text-xs px-2 py-1 rounded font-semibold">
+                    UTO
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  Svježe istarske kobasice kuhane u vino s kapuzom
+                </p>
+              </div>
+
+              <div className="bg-orange-50 rounded-lg p-3 border-l-4 border-orange-400">
+                <div className="flex items-center mb-1">
+                  <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded font-semibold">
+                    SRI
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  Domaći fuži s junećim gulašom
+                </p>
+              </div>
+
+              <div className="bg-purple-50 rounded-lg p-3 border-l-4 border-purple-400">
+                <div className="flex items-center mb-1">
+                  <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded font-semibold">
+                    ČET
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  Tjestenina s plodovima mora
+                </p>
+              </div>
+
+              <div className="bg-red-50 rounded-lg p-3 border-l-4 border-red-400">
+                <div className="flex items-center mb-1">
+                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded font-semibold">
+                    PET
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  Rižoto sa šugom od sipe
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Live stream 2 Section */}
