@@ -20,6 +20,33 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Drag & Resize Dashboard Layout
+
+The main dashboard (`src/app/page.tsx`) now uses `react-grid-layout` for a fully draggable and resizable experience.
+
+Features:
+
+- Drag panels by their header bar (shows a move cursor).
+- Resize panels using any edge or corner handle.
+- Layout automatically persists to `localStorage` under key `dashboard.layout.v1`.
+- Click "Reset layout" button to restore default arrangement.
+
+Implementation notes:
+
+- Breakpoints: `lg(>=1200):12 cols`, `md:10`, `sm:6`, `xs:4`, `xxs:2`.
+- Row height is `20`px; panel height units multiply this value.
+- Minimum sizes enforced per item to prevent accidental collapse.
+- To adjust defaults edit `defaultLayouts` in `page.tsx`.
+
+Potential next improvements:
+
+- Add a "Lock layout" toggle to prevent accidental moves.
+- Introduce server-side user specific layouts (persist beyond device).
+- Add a "Share layout" export button (downloads JSON).
+- Provide per-breakpoint tailored defaults.
+
+If layout rendering breaks after dependency upgrades to React 19 stable, re-check `react-grid-layout` version compatibility and remove the temporary `as any` cast at component creation.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
