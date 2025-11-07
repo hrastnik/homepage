@@ -14,9 +14,9 @@ import { Radar } from "./radar/Radar";
 
 export default async function IndexPage() {
   return (
-    <div className="flex flex-col h-screen max-h-screen bg-gray-100 text-gray-800 p-4">
+    <div className="flex flex-col h-screen max-h-screen bg-gray-100 text-gray-800 p-1">
       {/* Main content with grid */}
-      <div className="parent flex flex-1 gap-4">
+      <div className="parent flex flex-1 gap-2">
         {/* Pineta Section */}
         <ErrorBoundary fallback={<PinetaError />}>
           <Suspense fallback={<PinetaLoading />}>
@@ -68,7 +68,8 @@ export default async function IndexPage() {
         <Radar />
       </div>
 
-      <div className="flex mt-4 gap-4">
+      {/* Bottom row: increased flex weight */}
+      <div className="flex mt-2 min-h-[281px] gap-2">
         {/* Kebab Mamba Section */}
         <div className="flex flex-1">
           <KebabMamba />

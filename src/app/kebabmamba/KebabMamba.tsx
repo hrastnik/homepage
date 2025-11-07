@@ -7,19 +7,19 @@ interface Dish {
 }
 
 const dishList: Dish[] = [
-  { name: "Kebab tortilla", price: "6.5 EUR" },
-  { name: "Kebab lepinja", price: "6 EUR" },
-  { name: "Kebab box + pommes", price: "8.5 EUR" },
-  { name: "Chicken nuggets + pommes", price: "6 EUR" },
-  { name: "Hot dog", price: "3.5 EUR" },
-  { name: "Pommes", price: "4 EUR" },
-  { name: "Plata Mamba", price: "14.5 EUR" },
-  { name: "Topli sendvič šunka/pikant", price: "4.5 EUR" },
-  { name: "Čevapi", price: "9 EUR" },
-  { name: "Pizza margherita", price: "8 EUR" },
-  { name: "Pizza mješana", price: "9 EUR" },
-  { name: "Pizza diavola", price: "10 EUR" },
-  { name: '"Mamba" pizza', price: "13.5 EUR" },
+  { name: "Kebab tortilla", price: "€6.5" },
+  { name: "Kebab lepinja", price: "€6" },
+  { name: "Kebab box + pommes", price: "€8.5" },
+  { name: "Chicken nuggets + pommes", price: "€6" },
+  { name: "Hot dog", price: "€3.5" },
+  { name: "Pommes", price: "€4" },
+  { name: "Plata Mamba", price: "€14.5" },
+  { name: "Topli sendvič šunka/pikant", price: "€4.5" },
+  { name: "Čevapi", price: "€9" },
+  { name: "Pizza margherita", price: "€8" },
+  { name: "Pizza mješana", price: "€9" },
+  { name: "Pizza diavola", price: "€10" },
+  { name: '"Mamba" pizza', price: "€13.5" },
 ];
 
 // Tailwind background color palette (soft pastels) will be cycled per dish
@@ -97,10 +97,11 @@ function DishItem({ dish, index }: { dish: Dish; index: number }) {
         bgPalette[index % bgPalette.length]
       } p-1 rounded-lg shadow-sm hover:shadow-md transition-shadow`}
     >
-      <div className="flex-1">
-        <h3 className="text-md font-medium text-gray-700">
-          {index + 1}. {dish.name} - {dish.price}
+      <div className="flex-1 flex">
+        <h3 className="flex-1 text-sm font-medium text-gray-700">
+          {index + 1}. {dish.name}
         </h3>
+        <h3 className="ml-1 text-sm font-medium text-gray-700">{dish.price}</h3>
       </div>
     </div>
   );

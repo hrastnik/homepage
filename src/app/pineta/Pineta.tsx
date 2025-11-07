@@ -58,26 +58,27 @@ export async function Pineta() {
                 pineta.dishList.map((dish, index) => {
                   return (
                     <Fragment key={`${index} ${dish.name}`}>
-                      <div className="flex items-center bg-gray-50 p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex bg-gray-50 p-1 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                         {dish.imageURL ? (
                           <img
                             src={dish.imageURL}
                             alt={dish.name}
-                            className="w-14 h-14 rounded-md object-cover mr-4"
+                            className="w-10 h-10 rounded-md object-cover mr-4"
                           />
                         ) : (
-                          <div className="w-14 h-14 flex items-center justify-center bg-gray-200 text-gray-400 rounded-md mr-4">
+                          <div className="w-10 h-10 flex items-center justify-center bg-gray-200 text-gray-400 rounded-md mr-4">
                             No Image
                           </div>
                         )}
-                        <div className="flex-1">
-                          <h3 className="text-md font-medium text-gray-700">
+                        <div className="flex-1 flex">
+                          <h3 className="flex-1 text-md font-medium text-gray-700">
                             {index + 1}. {dish.name}
                           </h3>
-                          <p className="text-gray-500">{dish.price}</p>
+
+                          <p className="ml-1 text-gray-500">{dish.price}</p>
                         </div>
                       </div>
-                      <div className="h-2" />
+                      <div className="h-1" />
                     </Fragment>
                   );
                 })

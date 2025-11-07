@@ -67,10 +67,7 @@ export function Animate() {
       }
 
       // Faster speed:
-      // const duration = marquee.scrollHeight / 75 + "s";
-
-      // Slower speed:
-      const duration = marquee.scrollHeight / 50 + "s";
+      const duration = marquee.scrollHeight / 20 + "s";
 
       marquee.style.animationDuration = duration;
       marquee.dataset.processed = "true";
