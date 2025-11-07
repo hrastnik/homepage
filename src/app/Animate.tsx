@@ -66,7 +66,12 @@ export function Animate() {
         marquee.innerHTML += original; // doubled to compensate translateY(-50%) logic
       }
 
-      const duration = marquee.scrollHeight / 75 + "s";
+      // Faster speed:
+      // const duration = marquee.scrollHeight / 75 + "s";
+
+      // Slower speed:
+      const duration = marquee.scrollHeight / 50 + "s";
+
       marquee.style.animationDuration = duration;
       marquee.dataset.processed = "true";
     }
