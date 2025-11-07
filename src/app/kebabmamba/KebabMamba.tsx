@@ -47,9 +47,8 @@ export function KebabMamba() {
                     <div className="flex items-center bg-gray-50 p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex-1">
                         <h3 className="text-md font-medium text-gray-700">
-                          {index + 1}. {dish.name}
+                          {index + 1}. {dish.name} - {dish.price}
                         </h3>
-                        <p className="text-gray-500">{dish.price}</p>
                       </div>
                     </div>
                     <div className="h-2" />
@@ -63,9 +62,8 @@ export function KebabMamba() {
                     <div className="flex items-center bg-gray-50 p-2 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex-1">
                         <h3 className="text-md font-medium text-gray-700">
-                          {midpoint + index}. {dish.name}
+                          {midpoint + index}. {dish.name} - {dish.price}
                         </h3>
-                        <p className="text-gray-500">{dish.price}</p>
                       </div>
                     </div>
                     <div className="h-2" />
