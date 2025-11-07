@@ -6,6 +6,7 @@ import { LabinecaLoading } from "./labineca/LabinecaLoading";
 import { Pineta } from "./pineta/Pineta";
 import { PinetaError } from "./pineta/PinetaError";
 import { PinetaLoading } from "./pineta/PinetaLoading";
+import { KebabMamba } from "./kebabmamba/KebabMamba";
 import { Weather } from "./weather/Weather";
 import { WeatherError } from "./weather/WeatherError";
 import { WeatherLoading } from "./weather/WeatherLoading";
@@ -68,40 +69,10 @@ export default async function IndexPage() {
       </div>
 
       <div className="flex mt-4 gap-4">
-        {/* Live stream 1 Section */}
-        <div className="w-[calc(25%-1.25rem)] aspect-[560/315] justify-center items-center bg-white shadow-lg rounded-lg p-2">
-          <iframe
-            className="w-full h-full"
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/VQPLiEHV-tM?si=qrB5qlyYn5bvjsGA&controls=0&autoplay=1"
-            title="YouTube video player"
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore This is default YouTube embed code
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
+        {/* Kebab Mamba Section */}
+        <div className="flex flex-1">
+          <KebabMamba />
         </div>
-
-        {/* Live stream 2 Section */}
-        <div className="w-[calc(25%-0.25rem)] aspect-[560/315] justify-center items-center bg-white shadow-lg rounded-lg p-2">
-          <iframe
-            className="w-full h-full"
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/Q7cF-AckYgE?si=JJB9dhp2dJ-wJ_n7&controls=0&autoplay=1"
-            title="YouTube video player"
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore This is default YouTube embed code
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
-        </div>
-
         {/* Weather Section */}
         <ErrorBoundary fallback={<WeatherError />}>
           <Suspense fallback={<WeatherLoading />}>
