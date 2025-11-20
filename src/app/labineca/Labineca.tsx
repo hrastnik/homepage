@@ -25,50 +25,62 @@ export async function Labineca() {
       "images"
     );
 
-    const imageListParsed = imageListRaw.map((image) => {
-      try {
-        return JSON.parse(image);
-      } catch (error) {
-        console.log("Parsing error:", error);
-        return { width: 0, height: 0, uri: "" };
-      }
-    });
-
-    console.log("Labineca imageListParsed:", imageListParsed.length, "images");
-
-    const imageListWithWidthAndHeight: {
+    const imageListParsed: {
       uri: string;
       width: number;
       height: number;
-    }[] = imageListParsed.filter((image) => {
-      return "width" in image && "height" in image && "uri" in image;
-    });
+      id: number;
+    }[] = imageListRaw
+      .map((image) => {
+        try {
+          return JSON.parse(image);
+        } catch (error) {
+          console.log("Parsing error:", error);
 
-    console.log(
-      "Labineca imageListWithWidthAndHeight:",
-      imageListWithWidthAndHeight.length,
-      "images"
+          return { width: 0, height: 0, uri: "" };
+        }
+      })
+      .map((img) => {
+        // https://scontent.fzag1-2.fna.fbcdn.net/v/t39.30808-6/469703921_1310865936535795_8844515100120680089_n.jpg?_nc_cat=110&ccb=1-7&_
+        // We want to match `469703921_1310865936535795_8844515100120680089_n.jpg`
+        // then extract the middle number `1310865936535795`
+
+        const regex = /\d*_(\d*)_\d*_n.jpg/;
+        const match = img.uri.match(regex);
+        const id = Number(match ? match[1] : "0");
+        return { ...img, id: id };
+      });
+
+    const imageListParsedUnique = _.uniqBy(imageListParsed, (image) =>
+      image.id.toString()
     );
 
-    const postImageList = imageListWithWidthAndHeight.filter((image) => {
-      return 540 < image.width;
-    });
+    const imageListParsedAndFiltered = imageListParsedUnique
+      .filter((image) => {
+        return (
+          "width" in image &&
+          "height" in image &&
+          "uri" in image &&
+          "id" in image
+        );
+      })
+      .filter((image) => {
+        return image.width === 1080;
+      });
 
-    console.log("Labineca postImageList:", postImageList.length, "images");
-    console.log("Images: ", postImageList);
+    const sortedById = _.orderBy(
+      imageListParsedAndFiltered,
+      (image) => image.id,
+      ["desc"]
+    );
 
-    const latestPost = _.maxBy(postImageList, (image) => {
-      const uri = image.uri;
-      // https://scontent.fzag1-2.fna.fbcdn.net/v/t39.30808-6/469703921_1310865936535795_8844515100120680089_n.jpg?_nc_cat=110&ccb=1-7&_
-      // We want to match `469703921_1310865936535795_8844515100120680089_n.jpg`
-      // then extract the middle number `1310865936535795`
-      const regex = /\d*_(\d*)_\d*_n.jpg/;
-      const match = uri.match(regex);
-      const id = Number(match ? match[1] : "0");
-      return id;
-    });
+    console.log("Labineca imageListParsed:", sortedById.length, "images");
 
-    const labinecaURI = latestPost?.uri;
+    console.log("Labineca | Found", sortedById.length, "images");
+
+    console.log("Images: ", sortedById);
+
+    const labinecaURI = sortedById[0]?.uri;
 
     return {
       menuURI: labinecaURI,
