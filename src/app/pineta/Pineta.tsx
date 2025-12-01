@@ -29,7 +29,8 @@ export async function Pineta() {
 
   const pineta = await getPineta();
 
-  const isMonday = new Date().getDay() === 1;
+  // const isMonday = new Date().getDay() === 1;
+  const isClosed = false;
 
   return (
     <div className="flex flex-1 gap-4">
@@ -50,7 +51,7 @@ export async function Pineta() {
         <div className="flex-1 relative">
           <div className="absolute top-0 left-0 w-full h-full flex flex-col overflow-hidden">
             <div className="marquee">
-              {isMonday ? (
+              {isClosed ? (
                 <div className="text-center text-gray-500 text-md py-16">
                   Pineta ne radi ponedjeljkom
                 </div>
