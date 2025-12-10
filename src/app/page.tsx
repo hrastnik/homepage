@@ -7,6 +7,7 @@ import { Pineta } from "./pineta/Pineta";
 import { PinetaError } from "./pineta/PinetaError";
 import { PinetaLoading } from "./pineta/PinetaLoading";
 import { KebabMamba } from "./kebabmamba/KebabMamba";
+import { PitStop } from "./pit-stop/PitStop";
 import { Weather } from "./weather/Weather";
 import { WeatherError } from "./weather/WeatherError";
 import { WeatherLoading } from "./weather/WeatherLoading";
@@ -62,6 +63,11 @@ export default async function IndexPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Section Pit Stop */}
+        <div className="flex flex-1">
+          <PitStop />
         </div>
 
         {/* Section radar */}
