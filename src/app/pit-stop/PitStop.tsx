@@ -2,22 +2,43 @@
 
 import { useState, useRef, useCallback } from "react";
 
+const IMAGE_ASPECT_RATIO = 1200 / 1688;
+const THUMBNAIL_HEIGHT = 80;
+const THUMBNAIL_WIDTH = Math.round(THUMBNAIL_HEIGHT * IMAGE_ASPECT_RATIO); // ~57px
+const ZOOM_LEVEL = 3; // 300% zoom
+const EDGE_PADDING = 10; // % padding from edge for easier corner access
+
 export function PitStop() {
   const [isZoomed, setIsZoomed] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
+  const [containerAspectRatio, setContainerAspectRatio] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    const rawX = ((e.clientX - rect.left) / rect.width) * 100;
+    const rawY = ((e.clientY - rect.top) / rect.height) * 100;
+
+    // Map position with edge padding: EDGE_PADDING% from edge maps to 0/100%
+    const x = Math.min(
+      100,
+      Math.max(0, ((rawX - EDGE_PADDING) / (100 - 2 * EDGE_PADDING)) * 100)
+    );
+    const y = Math.min(
+      100,
+      Math.max(0, ((rawY - EDGE_PADDING) / (100 - 2 * EDGE_PADDING)) * 100)
+    );
 
     setPosition({ x, y });
   }, []);
 
   const handleMouseEnter = useCallback(() => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setContainerAspectRatio(rect.width / rect.height);
+    }
     setIsZoomed(true);
   }, []);
 
@@ -83,6 +104,38 @@ export function PitStop() {
                 backgroundRepeat: "no-repeat",
               }}
             />
+          )}
+
+          {/* Minimap preview - shows current zoom position */}
+          {isZoomed && (
+            <div
+              className="absolute bottom-2 right-2 pointer-events-none border-2 border-white shadow-lg rounded overflow-hidden"
+              style={{
+                width: THUMBNAIL_WIDTH,
+                height: THUMBNAIL_HEIGHT,
+              }}
+            >
+              <img
+                src="/pit-stop.jpg"
+                alt=""
+                className="w-full h-full object-contain bg-gray-100"
+                draggable={false}
+              />
+              {/* Highlight rectangle showing visible zoomed area */}
+              <div
+                className="absolute border-2 border-blue-500 bg-blue-500/20 rounded-sm"
+                style={{
+                  width: THUMBNAIL_WIDTH / ZOOM_LEVEL,
+                  height: THUMBNAIL_HEIGHT / ZOOM_LEVEL,
+                  left:
+                    (position.x / 100) *
+                    (THUMBNAIL_WIDTH - THUMBNAIL_WIDTH / ZOOM_LEVEL),
+                  top:
+                    (position.y / 100) *
+                    (THUMBNAIL_HEIGHT - THUMBNAIL_HEIGHT / ZOOM_LEVEL),
+                }}
+              />
+            </div>
           )}
         </div>
       </div>
