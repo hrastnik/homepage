@@ -9,6 +9,7 @@ const ZOOM_LEVEL = 3; // 300% zoom
 const EDGE_PADDING = 10; // % padding from edge for easier corner access
 
 export function PitStop() {
+  const isMonday = new Date().getDay() === 1;
   const [isZoomed, setIsZoomed] = useState(false);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [containerAspectRatio, setContainerAspectRatio] = useState(1);
@@ -64,81 +65,87 @@ export function PitStop() {
         </div>
       </div>
 
-      <div className="flex-1 relative">
-        <div
-          ref={containerRef}
-          className="absolute top-0 left-0 w-full h-full cursor-zoom-in"
-          onMouseMove={handleMouseMove}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          {/* Link wrapper for mobile tap-to-open */}
-          <a
-            href="/pit-stop.jpg"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full h-full"
-            onClick={(e) => {
-              // Prevent opening on desktop where hover zoom works
-              if (window.matchMedia("(hover: hover)").matches) {
-                e.preventDefault();
-              }
-            }}
+      {isMonday ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-xl text-gray-600">Pit Stop ne radi danas</p>
+        </div>
+      ) : (
+        <div className="flex-1 relative">
+          <div
+            ref={containerRef}
+            className="absolute top-0 left-0 w-full h-full cursor-zoom-in"
+            onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            <img
-              src="/pit-stop.jpg"
-              alt="Pit Stop Menu"
-              className="w-full h-full object-contain menu-image"
-              draggable={false}
-            />
-          </a>
-
-          {/* Zoomed overlay - shows on hover (desktop only) */}
-          {isZoomed && (
-            <div
-              className="absolute top-0 left-0 w-full h-full pointer-events-none"
-              style={{
-                backgroundImage: "url(/pit-stop.jpg)",
-                backgroundSize: "300%",
-                backgroundPosition: `${position.x}% ${position.y}%`,
-                backgroundRepeat: "no-repeat",
-              }}
-            />
-          )}
-
-          {/* Minimap preview - shows current zoom position */}
-          {isZoomed && (
-            <div
-              className="absolute bottom-2 right-2 pointer-events-none border-2 border-white shadow-lg rounded overflow-hidden"
-              style={{
-                width: THUMBNAIL_WIDTH,
-                height: THUMBNAIL_HEIGHT,
+            {/* Link wrapper for mobile tap-to-open */}
+            <a
+              href="/pit-stop.jpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full h-full"
+              onClick={(e) => {
+                // Prevent opening on desktop where hover zoom works
+                if (window.matchMedia("(hover: hover)").matches) {
+                  e.preventDefault();
+                }
               }}
             >
               <img
                 src="/pit-stop.jpg"
-                alt=""
-                className="w-full h-full object-contain bg-gray-100"
+                alt="Pit Stop Menu"
+                className="w-full h-full object-contain menu-image"
                 draggable={false}
               />
-              {/* Highlight rectangle showing visible zoomed area */}
+            </a>
+
+            {/* Zoomed overlay - shows on hover (desktop only) */}
+            {isZoomed && (
               <div
-                className="absolute border-2 border-blue-500 bg-blue-500/20 rounded-sm"
+                className="absolute top-0 left-0 w-full h-full pointer-events-none"
                 style={{
-                  width: THUMBNAIL_WIDTH / ZOOM_LEVEL,
-                  height: THUMBNAIL_HEIGHT / ZOOM_LEVEL,
-                  left:
-                    (position.x / 100) *
-                    (THUMBNAIL_WIDTH - THUMBNAIL_WIDTH / ZOOM_LEVEL),
-                  top:
-                    (position.y / 100) *
-                    (THUMBNAIL_HEIGHT - THUMBNAIL_HEIGHT / ZOOM_LEVEL),
+                  backgroundImage: "url(/pit-stop.jpg)",
+                  backgroundSize: "300%",
+                  backgroundPosition: `${position.x}% ${position.y}%`,
+                  backgroundRepeat: "no-repeat",
                 }}
               />
-            </div>
-          )}
+            )}
+
+            {/* Minimap preview - shows current zoom position */}
+            {isZoomed && (
+              <div
+                className="absolute bottom-2 right-2 pointer-events-none border-2 border-white shadow-lg rounded overflow-hidden"
+                style={{
+                  width: THUMBNAIL_WIDTH,
+                  height: THUMBNAIL_HEIGHT,
+                }}
+              >
+                <img
+                  src="/pit-stop.jpg"
+                  alt=""
+                  className="w-full h-full object-contain bg-gray-100"
+                  draggable={false}
+                />
+                {/* Highlight rectangle showing visible zoomed area */}
+                <div
+                  className="absolute border-2 border-blue-500 bg-blue-500/20 rounded-sm"
+                  style={{
+                    width: THUMBNAIL_WIDTH / ZOOM_LEVEL,
+                    height: THUMBNAIL_HEIGHT / ZOOM_LEVEL,
+                    left:
+                      (position.x / 100) *
+                      (THUMBNAIL_WIDTH - THUMBNAIL_WIDTH / ZOOM_LEVEL),
+                    top:
+                      (position.y / 100) *
+                      (THUMBNAIL_HEIGHT - THUMBNAIL_HEIGHT / ZOOM_LEVEL),
+                  }}
+                />
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
