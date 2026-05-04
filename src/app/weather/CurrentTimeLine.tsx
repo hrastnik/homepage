@@ -2,6 +2,36 @@
 
 import React, { useEffect, useState } from "react";
 
+function parseHeaderHour(label: string) {
+  const match = label.trim().match(/^(\d{1,2}):/);
+
+  if (!match) {
+    return null;
+  }
+
+  return Number(match[1]);
+}
+
+function getCurrentForecastTime(now: Date) {
+  const formatter = new Intl.DateTimeFormat("hr-HR", {
+    timeZone: "Europe/Zagreb",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(now);
+  const hour = Number(parts.find((part) => part.type === "hour")?.value ?? 0);
+  const minute = Number(
+    parts.find((part) => part.type === "minute")?.value ?? 0,
+  );
+
+  return {
+    hour,
+    minute,
+    label: `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`,
+  };
+}
+
 export function CurrentTimeLine() {
   const [linePosition, setLinePosition] = useState<number | null>(null);
   const [lastRowHeight, setLastRowHeight] = useState(0);
@@ -15,37 +45,53 @@ export function CurrentTimeLine() {
       const table = tableParent.querySelector("table");
       if (!table) return;
 
-      const headers = table.querySelectorAll("th[scope='col']");
-      if (headers.length < 2) return; // Ensure at least two columns for calculation
+      const headers = Array.from(table.querySelectorAll("th[scope='col']"));
+      const timeHeaders = headers
+        .map((header) => ({
+          element: header,
+          hour: parseHeaderHour(header.textContent ?? ""),
+        }))
+        .filter(
+          (header): header is { element: HTMLTableCellElement; hour: number } =>
+            header.hour !== null,
+        );
+
+      if (timeHeaders.length < 2) return;
 
       const now = new Date();
+      const forecastTime = getCurrentForecastTime(now);
 
-      setCurrentTime(
-        now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) // Update the label to show current time
-      );
+      setCurrentTime(forecastTime.label);
 
-      // Get the position of the left side of the "1:00" cell and the right side of the "22:00" cell
-      // First column is the empty cell, so we start from the second column
-      const column1AM = headers[1];
-      const column22PM = headers[headers.length - 1];
-      const column1AMRect = column1AM.getBoundingClientRect();
-      const column22PMRect = column22PM.getBoundingClientRect();
       const tableRect = tableParent.getBoundingClientRect();
+      const firstHeader = timeHeaders[0];
+      const lastHeader = timeHeaders[timeHeaders.length - 1];
+      const firstHeaderRect = firstHeader.element.getBoundingClientRect();
+      const lastHeaderRect = lastHeader.element.getBoundingClientRect();
+      const firstHeaderCenter =
+        firstHeaderRect.left - tableRect.left + firstHeaderRect.width / 2;
+      const lastHeaderCenter =
+        lastHeaderRect.left - tableRect.left + lastHeaderRect.width / 2;
+      const totalHours = lastHeader.hour - firstHeader.hour;
 
-      const offsetOf1AM = column1AMRect.x - tableRect.x;
-      const widthOf21Hours = column22PMRect.x - column1AMRect.x;
-      const widthOf1Hour = widthOf21Hours / 21;
+      if (totalHours <= 0) return;
 
-      // Calculate the line's position as a percentage between the 1:00 column and 22:00 column
-      const currentHour = now.getHours();
-      const currentMinutes = now.getMinutes();
-      const currentTimeDecimal = currentHour + currentMinutes / 60; // Current time as a decimal (e.g., 11.5 for 11:30)
+      const currentHour = forecastTime.hour;
+      const currentMinutes = forecastTime.minute;
+      const currentTimeDecimal = currentHour + currentMinutes / 60;
+      const normalizedTime =
+        (currentTimeDecimal - firstHeader.hour) / totalHours;
+      const clampedTime = Math.min(Math.max(normalizedTime, 0), 1);
+      const linePosition =
+        firstHeaderCenter +
+        (lastHeaderCenter - firstHeaderCenter) * clampedTime;
 
-      const linePosition = offsetOf1AM + currentTimeDecimal * widthOf1Hour;
       setLinePosition(linePosition);
 
       const lastRow = table.querySelector("tr:last-child");
-      setLastRowHeight(lastRow!.getBoundingClientRect().height);
+      if (!lastRow) return;
+
+      setLastRowHeight(lastRow.getBoundingClientRect().height);
     };
 
     calculatePosition();
