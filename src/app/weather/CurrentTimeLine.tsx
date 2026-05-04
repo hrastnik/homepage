@@ -32,10 +32,123 @@ function getCurrentForecastTime(now: Date) {
   };
 }
 
+function getCurrentForecastDate(now: Date) {
+  return new Intl.DateTimeFormat("hr-HR", {
+    timeZone: "Europe/Zagreb",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(now);
+}
+
+function normalizeDateKey(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+function parseTemperature(label: string) {
+  const match = label.match(/-?\d+(?:[.,]\d+)?/);
+
+  if (!match) {
+    return null;
+  }
+
+  return Number(match[0].replace(",", "."));
+}
+
+function formatTemperature(value: number) {
+  const roundedValue = Math.round(value * 10) / 10;
+  const hasFraction = Math.abs(roundedValue % 1) > Number.EPSILON;
+
+  return `${hasFraction ? roundedValue.toFixed(1) : roundedValue.toFixed(0)} °C`;
+}
+
+function getInterpolatedTemperature(
+  table: HTMLTableElement,
+  timeHeaders: Array<{ element: HTMLTableCellElement; hour: number }>,
+  currentDateLabel: string,
+  currentTimeDecimal: number,
+) {
+  const dayRows = Array.from(
+    table.querySelectorAll("th[scope='row'][rowspan='3']"),
+  );
+  const currentDateKey = normalizeDateKey(currentDateLabel);
+  const currentDayHeader = dayRows.find((header) =>
+    normalizeDateKey(header.textContent ?? "").includes(currentDateKey),
+  );
+
+  if (!(currentDayHeader instanceof HTMLTableCellElement)) {
+    return null;
+  }
+
+  const iconRow = currentDayHeader.parentElement;
+  const temperatureRow = iconRow?.nextElementSibling;
+
+  if (!(temperatureRow instanceof HTMLTableRowElement)) {
+    return null;
+  }
+
+  const temperatureCells = Array.from(temperatureRow.querySelectorAll("td"));
+  const temperatureEntries = timeHeaders
+    .map(({ hour }, index) => ({
+      hour,
+      temperature: parseTemperature(temperatureCells[index]?.textContent ?? ""),
+    }))
+    .filter(
+      (entry): entry is { hour: number; temperature: number } =>
+        entry.temperature !== null,
+    );
+
+  if (temperatureEntries.length === 0) {
+    return null;
+  }
+
+  const exactEntry = temperatureEntries.find(
+    (entry) => Math.abs(entry.hour - currentTimeDecimal) < 1 / 60,
+  );
+
+  if (exactEntry) {
+    return exactEntry.temperature;
+  }
+
+  let leftEntry: { hour: number; temperature: number } | null = null;
+  let rightEntry: { hour: number; temperature: number } | null = null;
+
+  for (const entry of temperatureEntries) {
+    if (entry.hour <= currentTimeDecimal) {
+      leftEntry = entry;
+    }
+
+    if (entry.hour >= currentTimeDecimal) {
+      rightEntry = entry;
+      break;
+    }
+  }
+
+  if (leftEntry && rightEntry) {
+    if (leftEntry.hour === rightEntry.hour) {
+      return leftEntry.temperature;
+    }
+
+    const progress =
+      (currentTimeDecimal - leftEntry.hour) /
+      (rightEntry.hour - leftEntry.hour);
+
+    return (
+      leftEntry.temperature +
+      (rightEntry.temperature - leftEntry.temperature) * progress
+    );
+  }
+
+  return leftEntry?.temperature ?? rightEntry?.temperature ?? null;
+}
+
 export function CurrentTimeLine() {
   const [linePosition, setLinePosition] = useState<number | null>(null);
   const [lastRowHeight, setLastRowHeight] = useState(0);
   const [currentTime, setCurrentTime] = useState<string>("");
+  const [currentTemperature, setCurrentTemperature] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     const calculatePosition = () => {
@@ -60,6 +173,7 @@ export function CurrentTimeLine() {
 
       const now = new Date();
       const forecastTime = getCurrentForecastTime(now);
+      const forecastDate = getCurrentForecastDate(now);
 
       setCurrentTime(forecastTime.label);
 
@@ -79,6 +193,13 @@ export function CurrentTimeLine() {
       const currentHour = forecastTime.hour;
       const currentMinutes = forecastTime.minute;
       const currentTimeDecimal = currentHour + currentMinutes / 60;
+      const interpolatedTemperature = getInterpolatedTemperature(
+        table,
+        timeHeaders,
+        forecastDate,
+        currentTimeDecimal,
+      );
+
       const normalizedTime =
         (currentTimeDecimal - firstHeader.hour) / totalHours;
       const clampedTime = Math.min(Math.max(normalizedTime, 0), 1);
@@ -86,6 +207,11 @@ export function CurrentTimeLine() {
         firstHeaderCenter +
         (lastHeaderCenter - firstHeaderCenter) * clampedTime;
 
+      setCurrentTemperature(
+        interpolatedTemperature === null
+          ? null
+          : formatTemperature(interpolatedTemperature),
+      );
       setLinePosition(linePosition);
 
       const lastRow = table.querySelector("tr:last-child");
@@ -134,9 +260,16 @@ export function CurrentTimeLine() {
           borderRadius: "4px",
           boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
           whiteSpace: "nowrap",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "1px",
         }}
       >
-        {currentTime}
+        <span>{currentTime}</span>
+        {currentTemperature ? (
+          <span style={{ fontSize: "0.68rem" }}>{currentTemperature}</span>
+        ) : null}
       </div>
     </div>
   );
