@@ -22,62 +22,67 @@ export async function Labineca() {
     console.log(
       "Labineca imageListRaw (regex matches):",
       imageListRaw.length,
-      "images"
+      "images",
     );
 
-    const imageListParsed: {
-      uri: string;
-      width: number;
-      height: number;
-      id: number;
-    }[] = imageListRaw
+    type ParsedImage = { uri: string; width: number; id: string };
+
+    const imageListParsed = imageListRaw
       .map((image) => {
         try {
-          return JSON.parse(image);
+          return JSON.parse(image) as { uri?: string; width?: number };
         } catch (error) {
           console.log("Parsing error:", error);
-
-          return { width: 0, height: 0, uri: "" };
+          return { uri: "", width: 0 };
         }
       })
-      .map((img) => {
-        // https://scontent.fzag1-2.fna.fbcdn.net/v/t39.30808-6/469703921_1310865936535795_8844515100120680089_n.jpg?_nc_cat=110&ccb=1-7&_
-        // We want to match `469703921_1310865936535795_8844515100120680089_n.jpg`
-        // then extract the middle number `1310865936535795`
-
-        const regex = /\d*_(\d*)_\d*_n.jpg/;
-        const match = img.uri.match(regex);
-        const id = Number(match ? match[1] : "0");
-        return { ...img, id: id };
-      });
-
-    const imageListParsedUnique = _.uniqBy(imageListParsed, (image) =>
-      image.id.toString()
-    );
-
-    const imageListParsedAndFiltered = imageListParsedUnique
-      .filter((image) => {
-        return (
-          "width" in image &&
-          "height" in image &&
-          "uri" in image &&
-          "id" in image
+      .map((img): ParsedImage => {
+        // Native Facebook photos are served under /t39.<...>/ and embed the
+        // photo id as the middle number of <surface>_<photoId>_<hash>_n.<ext>,
+        // e.g. .../t39.30808-6/469703921_1310865936535795_8844515..._n.jpg
+        // The photo id grows over time, so the highest id is the most recently
+        // posted photo (the daily "PONUDA DANA" menu).
+        //
+        // Notes that matter for picking the right image:
+        // - The menu is sometimes a .png served as t39.99422-6, so we accept
+        //   jpg AND png across any t39.* subtype (not only t39.30808-6 jpgs).
+        // - We deliberately ignore /t51.*/ images (Instagram cross-posts); their
+        //   ids use a different numbering scheme and are NOT comparable here.
+        // - The page cover photo is also a t39 photo, but it has a lower id than
+        //   the latest post, so "highest id" naturally skips it.
+        const match = (img.uri ?? "").match(
+          /\/t39\.[\d-]+\/\d+_(\d+)_\d+_n\.(?:jpg|png)/,
         );
+        return {
+          uri: img.uri ?? "",
+          // Facebook serves the same photo at several resolutions; keep the
+          // numeric width so we can later pick the largest variant per photo.
+          width: Number(img.width) || 0,
+          id: match ? match[1] : "",
+        };
       })
-      .filter((image) => {
-        return image.width === 1080;
-      });
+      // Keep only real page photos (those with an extractable photo id).
+      .filter((image) => image.id !== "");
 
-    const sortedById = _.orderBy(
-      imageListParsedAndFiltered,
-      (image) => image.id,
-      ["desc"]
+    // The same photo appears multiple times at different sizes. Group by photo
+    // id and keep the largest variant of each, so we always show a high-res
+    // image regardless of which resolutions Facebook happened to include.
+    const bestVariantPerPhoto = _.values(
+      _.groupBy(imageListParsed, (image) => image.id),
+    ).map((variants) => _.maxBy(variants, (image) => image.width)!);
+
+    // Drop thumbnails / logos (the page avatar comes through at ~80px wide).
+    const candidates = bestVariantPerPhoto.filter(
+      (image) => image.width >= 500,
     );
 
-    console.log("Labineca imageListParsed:", sortedById.length, "images");
+    // Sort by photo id, newest first. Ids can exceed Number.MAX_SAFE_INTEGER,
+    // so compare them as integers via BigInt rather than as Number/string.
+    const sortedById = [...candidates].sort((a, b) =>
+      a.id === b.id ? 0 : BigInt(a.id) > BigInt(b.id) ? -1 : 1,
+    );
 
-    console.log("Labineca | Found", sortedById.length, "images");
-
+    console.log("Labineca | Found", sortedById.length, "candidate photos");
     console.log("Images: ", sortedById);
 
     const labinecaURI = sortedById[0]?.uri;
@@ -108,11 +113,17 @@ export async function Labineca() {
       </div>
 
       <div className="flex-1 overflow-hidden relative">
-        <img
-          src={labineca.menuURI}
-          alt="Labineca Menu"
-          className="absolute top-0 left-0 w-full h-full object-contain"
-        />
+        {labineca.menuURI ? (
+          <img
+            src={labineca.menuURI}
+            alt="Labineca Menu"
+            className="absolute top-0 left-0 w-full h-full object-contain"
+          />
+        ) : (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400 text-md">
+            Trenutno nije dostupno
+          </div>
+        )}
       </div>
     </div>
   );
