@@ -16,76 +16,64 @@ export async function Labineca() {
     });
     const html = await response.text();
 
+    // Regex to pull the photo id (the middle number) out of a Facebook photo
+    // URL, e.g. .../t39.99422-6/734756496_1035827199201917_4616..._n.png
+    const PHOTO_URL = /\/t39\.[\d-]+\/\d+_(\d+)_\d+_n\.(?:jpg|png)/;
+
+    // Find the id of the most recently posted photo.
+    //
+    // Facebook embeds a "PHOTOS" profile tile whose photo grid is ordered
+    // newest-first; its first entry is the latest post — for Labineca that's the
+    // daily "PONUDA DANA" menu (it's exactly what the browser renders right
+    // under the cover photo). We anchor on that section and read the id of its
+    // first photo.
+    //
+    // We rely on Facebook's own ordering rather than on photo ids or content
+    // types, because neither is stable: ids are not monotonic across Facebook's
+    // image types (e.g. t39.99422-6 vs t39.30808-6) and the menu's type changes
+    // over time. Sorting by "highest id" or filtering by a fixed type both end
+    // up showing stale closed-for-holiday announcements.
+    function getLatestPhotoId() {
+      const anchor = html.indexOf('"profile_tile_section_type":"PHOTOS"');
+      if (anchor === -1) return null;
+      // In these JSON blocks slashes are escaped (\/), so unescape a window
+      // after the anchor before matching the first photo URL.
+      const section = html
+        .slice(anchor, anchor + 8000)
+        .replace(/\\\//g, "/")
+        .replace(/\\u0026/g, "&");
+      return section.match(PHOTO_URL)?.[1] ?? null;
+    }
+
+    const latestPhotoId = getLatestPhotoId();
+
+    // Facebook lists the same photo at several resolutions as {"uri":...} blobs.
+    // Collect every variant of the latest photo and show the largest one.
     const imageRegex = /{"uri":[^}]*jpg[^}]*}/gm;
-    const imageListRaw = html.match(imageRegex) ?? [];
-
-    console.log(
-      "Labineca imageListRaw (regex matches):",
-      imageListRaw.length,
-      "images",
-    );
-
-    type ParsedImage = { uri: string; width: number; id: string };
-
-    const imageListParsed = imageListRaw
-      .map((image) => {
+    const variants = (html.match(imageRegex) ?? [])
+      .map((blob) => {
         try {
-          return JSON.parse(image) as { uri?: string; width?: number };
+          return JSON.parse(blob) as { uri?: string; width?: number };
         } catch (error) {
           console.log("Parsing error:", error);
           return { uri: "", width: 0 };
         }
       })
-      .map((img): ParsedImage => {
-        // Native Facebook photos are served under /t39.<...>/ and embed the
-        // photo id as the middle number of <surface>_<photoId>_<hash>_n.<ext>,
-        // e.g. .../t39.30808-6/469703921_1310865936535795_8844515..._n.jpg
-        // The photo id grows over time, so the highest id is the most recently
-        // posted photo (the daily "PONUDA DANA" menu).
-        //
-        // Notes that matter for picking the right image:
-        // - The menu is sometimes a .png served as t39.99422-6, so we accept
-        //   jpg AND png across any t39.* subtype (not only t39.30808-6 jpgs).
-        // - We deliberately ignore /t51.*/ images (Instagram cross-posts); their
-        //   ids use a different numbering scheme and are NOT comparable here.
-        // - The page cover photo is also a t39 photo, but it has a lower id than
-        //   the latest post, so "highest id" naturally skips it.
-        const match = (img.uri ?? "").match(
-          /\/t39\.[\d-]+\/\d+_(\d+)_\d+_n\.(?:jpg|png)/,
-        );
-        return {
-          uri: img.uri ?? "",
-          // Facebook serves the same photo at several resolutions; keep the
-          // numeric width so we can later pick the largest variant per photo.
-          width: Number(img.width) || 0,
-          id: match ? match[1] : "",
-        };
-      })
-      // Keep only real page photos (those with an extractable photo id).
-      .filter((image) => image.id !== "");
+      .map((img) => ({
+        uri: img.uri ?? "",
+        width: Number(img.width) || 0,
+        id: (img.uri ?? "").match(PHOTO_URL)?.[1] ?? "",
+      }))
+      .filter((img) => img.uri && img.id === latestPhotoId);
 
-    // The same photo appears multiple times at different sizes. Group by photo
-    // id and keep the largest variant of each, so we always show a high-res
-    // image regardless of which resolutions Facebook happened to include.
-    const bestVariantPerPhoto = _.values(
-      _.groupBy(imageListParsed, (image) => image.id),
-    ).map((variants) => _.maxBy(variants, (image) => image.width)!);
-
-    // Drop thumbnails / logos (the page avatar comes through at ~80px wide).
-    const candidates = bestVariantPerPhoto.filter(
-      (image) => image.width >= 500,
+    console.log(
+      "Labineca | latest photo id:",
+      latestPhotoId,
+      "| variants:",
+      variants.length,
     );
 
-    // Sort by photo id, newest first. Ids can exceed Number.MAX_SAFE_INTEGER,
-    // so compare them as integers via BigInt rather than as Number/string.
-    const sortedById = [...candidates].sort((a, b) =>
-      a.id === b.id ? 0 : BigInt(a.id) > BigInt(b.id) ? -1 : 1,
-    );
-
-    console.log("Labineca | Found", sortedById.length, "candidate photos");
-    console.log("Images: ", sortedById);
-
-    const labinecaURI = sortedById[0]?.uri;
+    const labinecaURI = _.maxBy(variants, (image) => image.width)?.uri;
 
     return {
       menuURI: labinecaURI,
