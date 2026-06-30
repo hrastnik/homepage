@@ -7,19 +7,46 @@ interface Dish {
 }
 
 const dishList: Dish[] = [
-  { name: "Kebab tortilla", price: "€6.5" },
-  { name: "Kebab lepinja", price: "€6" },
+  // Kebab
+  { name: "Kebab tortilla", price: "€7" },
+  { name: "Kebab lepinja", price: "€6.5" },
   { name: "Kebab box + pommes", price: "€8.5" },
-  { name: "Chicken nuggets + pommes", price: "€6" },
-  { name: "Hot dog", price: "€3.5" },
+  { name: "Pileca kebab salata", price: "€8" },
+
+  // Pommes i nuggets
   { name: "Pommes", price: "€4" },
-  { name: "Plata Mamba", price: "€14.5" },
-  { name: "Topli sendvič šunka/pikant", price: "€4.5" },
-  { name: "Čevapi", price: "€9" },
-  { name: "Pizza margherita", price: "€8" },
-  { name: "Pizza mješana", price: "€9" },
-  { name: "Pizza diavola", price: "€10" },
-  { name: '"Mamba" pizza', price: "€13.5" },
+  { name: "Chicken nuggets + pommes", price: "€6.5" },
+
+  // Special
+  { name: "Mamba chicken roll", price: "€6.5" },
+
+  // burgeri i cevapi
+  { name: "Hamburger", price: "€7" },
+  { name: "Cheeseburger", price: "€7" },
+  { name: "5 čevapa u lepinji", price: "€6" },
+  { name: "10 čevapa u lepinji", price: "€11" },
+
+  // Sandwich
+  { name: "Topli sendvič šunka sir", price: "€6" },
+  { name: "Topli sendvič kulen sir", price: "€6" },
+  { name: "Topli sendvič tuna sir", price: "€6.5" },
+  { name: "Topli sendvič pršut sir", price: "€7" },
+
+  // Pizze
+  { name: "Pizza mamba", price: "€14" },
+  { name: "Pizza margherita", price: "€8.5" },
+  { name: "Pizza mješana", price: "€10" },
+  { name: "Pizza fungi", price: "€9.5" },
+  { name: "Pizza diavola", price: "€10.5" },
+  { name: "Pizza salami", price: "€10" },
+  { name: "Pizza pršut", price: "€12.5" },
+  { name: "Pizza tuna", price: "€12" },
+  { name: "Pizza seljačka", price: "€12.5" },
+
+  // Calzone
+  { name: "Calzone mamba", price: "€12" },
+  { name: "Calzone tuna", price: "9.5" },
+  { name: "Calzone šunka", price: "9.5" },
 ];
 
 // Tailwind background color palette (soft pastels) will be cycled per dish
